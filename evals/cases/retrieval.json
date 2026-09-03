@@ -1,0 +1,27 @@
+{
+  "description": "Does the chunk that actually answers the question come back first? Recall@1 is what matters for a citation: the answer names one source, and a reader who follows it to the wrong section stops trusting the tool.",
+  "cases": [
+    {"id": "torque-spec", "query": "AX-200 flange bolt torque spec",
+     "expect_doc": "ax200-service", "expect_section": "Flange Bolt Torque",
+     "why": "The section that answers this never contains the string 'AX-200'. Before chunks carried document context, Scope ranked first and answered nothing."},
+    {"id": "refrigerant-charge", "query": "how much refrigerant does the AX-200 hold",
+     "expect_doc": "ax200-service", "expect_section": "Refrigerant Charge",
+     "why": "Paraphrase: 'hold' never appears; the manual says 'factory charge'."},
+    {"id": "error-code-exact", "query": "error code E-27",
+     "expect_doc": "ax200-service", "expect_section": "Error Codes",
+     "why": "Exact identifier. This is the query class embeddings blur and lexical nails."},
+    {"id": "error-code-described", "query": "lost communication with the outdoor board",
+     "expect_doc": "ax200-service", "expect_section": "Error Codes",
+     "why": "Same fact reached by description instead of code."},
+    {"id": "trap-depth", "query": "condensate trap depth",
+     "expect_doc": "bx400-install", "expect_section": "Condensate",
+     "why": "Cross-document: must not drift to the AX-200 manual."},
+    {"id": "ampacity", "query": "minimum circuit ampacity BX-400",
+     "expect_doc": "bx400-install", "expect_section": "Electrical", "why": "Spec lookup."},
+    {"id": "clearance", "query": "service clearance in front of the air handler",
+     "expect_doc": "bx400-install", "expect_section": "Clearances",
+     "why": "'air handler' appears in the document title, not the section."},
+    {"id": "warranty", "query": "what is the sealed system warranty",
+     "expect_doc": "ax200-service", "expect_section": "Warranty", "why": "Baseline."}
+  ]
+}

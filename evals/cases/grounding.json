@@ -1,0 +1,31 @@
+{
+  "description": "Verification of a generated answer against the sources it cites. Sources are given inline so these cases are independent of retrieval and of any model.",
+  "cases": [
+    {"id": "faithful", "sources": ["Torque the compressor flange bolts to 35 ft-lb in a star pattern."],
+     "answer": "Torque the flange bolts to 35 ft-lb in a star pattern. [1]",
+     "expect_verdict": "accept", "why": "Correct and cited."},
+    {"id": "hallucinated-number", "sources": ["Torque the compressor flange bolts to 35 ft-lb in a star pattern."],
+     "answer": "Torque the flange bolts to 45 ft-lb in a star pattern. [1]",
+     "expect_verdict": "reject",
+     "why": "THE failure this system exists to stop. Real citation, fluent sentence, wrong figure. Over-torquing cracks the casting."},
+    {"id": "missing-citation", "sources": ["The factory charge is 4.2 lb of R-410A."],
+     "answer": "The factory charge is 4.2 lb of R-410A.",
+     "expect_verdict": "revise", "why": "Right answer, no citation. Not publishable as-is."},
+    {"id": "fabricated-claim", "sources": ["Torque the compressor flange bolts to 35 ft-lb."],
+     "answer": "The unit requires annual certification by a licensed state inspector. [1]",
+     "expect_verdict": "revise", "why": "Invented obligation wearing a real citation."},
+    {"id": "citation-out-of-range", "sources": ["The factory charge is 4.2 lb of R-410A."],
+     "answer": "The factory charge is 4.2 lb of R-410A. [3]",
+     "expect_verdict": "revise", "why": "Points at a source that was never retrieved."},
+    {"id": "mixed-good-and-bad", "sources": ["The factory charge is 4.2 lb of R-410A. Subcooling target is 10 F."],
+     "answer": "The factory charge is 4.2 lb of R-410A. [1] Subcooling target is 12 F. [1]",
+     "expect_verdict": "reject", "why": "One good sentence does not rescue a wrong number in the next."},
+    {"id": "step-numbers-are-not-specs", "sources": ["Reset by cycling disconnect power for 30 seconds."],
+     "answer": "See step 2 for the reset procedure: cycle disconnect power for 30 seconds. [1]",
+     "expect_verdict": "accept",
+     "why": "'step 2' is navigation, not a specification. Treating every digit as a spec would make the verifier unusable."},
+    {"id": "unit-preserved", "sources": ["Maintain 24 inches of service clearance at the front."],
+     "answer": "Maintain 24 inches of service clearance at the front. [1]",
+     "expect_verdict": "accept", "why": "Baseline for the clearance path."}
+  ]
+}

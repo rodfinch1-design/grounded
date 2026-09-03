@@ -1,0 +1,33 @@
+{
+  "total": 25,
+  "passed": 25,
+  "safe_misses": 0,
+  "dangerous": 0,
+  "corpus_chunks": 11,
+  "suites": {
+    "retrieval": {
+      "total": 8,
+      "passed": 8,
+      "safe_misses": 0,
+      "dangerous": 0
+    },
+    "refusal": {
+      "total": 6,
+      "passed": 6,
+      "safe_misses": 0,
+      "dangerous": 0
+    },
+    "grounding": {
+      "total": 8,
+      "passed": 8,
+      "safe_misses": 0,
+      "dangerous": 0
+    },
+    "version": {
+      "total": 3,
+      "passed": 3,
+      "safe_misses": 0,
+      "dangerous": 0
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "description": "Refusing is the whole product. Answering a question the corpus cannot support is the dangerous failure; declining one it could have answered is a safe one.",
+  "cases": [
+    {"id": "out-unrelated-domain", "query": "how do I file a workers compensation claim in Florida",
+     "expect": "refused", "why": "No query term appears in the corpus. Lexical evidence is 0."},
+    {"id": "out-general-knowledge", "query": "what is the capital of France",
+     "expect": "refused", "why": "The model knows this. It must not answer it from an HVAC corpus."},
+    {"id": "out-shared-vocabulary", "query": "what is the warranty on a Ford F-150 transmission",
+     "expect": "refused",
+     "why": "THE hard one. Scores BM25 3.24 against the AX-200 warranty section because 'warranty' carries it. No relevance threshold catches this; the unknown-identifier gate does, because F-150 appears nowhere in the corpus."},
+    {"id": "out-plausible-equipment", "query": "what is the flange bolt torque on the CX-900",
+     "expect": "refused",
+     "why": "Correct question shape, correct vocabulary, equipment that does not exist here. The most dangerous input a technician tool can receive."},
+    {"id": "in-should-answer", "query": "AX-200 flange bolt torque spec",
+     "expect": "not_refused", "why": "Guard against a gate so tight it refuses real work."},
+    {"id": "in-unhyphenated-model", "query": "AX200 refrigerant charge",
+     "expect": "not_refused",
+     "why": "A tech types AX200; the manual says AX-200. Identifier normalisation must not turn that into a refusal."}
+  ]
+}

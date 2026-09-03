@@ -1,0 +1,14 @@
+{
+  "description": "Version awareness. Revision 1.0 of the AX-200 manual says 28 ft-lb and 3.8 lb of charge; revision 2.1 supersedes it with 35 ft-lb and 4.2 lb. Citing the superseded figure is indistinguishable from a hallucination to the technician holding the wrench.",
+  "cases": [
+    {"id": "torque-uses-current-revision", "query": "AX-200 flange bolt torque",
+     "forbid_doc": "ax200-service-v1", "require_text": "35",
+     "why": "The superseded manual is still in the corpus and is topically a perfect match. It must never be cited by default."},
+    {"id": "charge-uses-current-revision", "query": "AX-200 factory refrigerant charge",
+     "forbid_doc": "ax200-service-v1", "require_text": "4.2",
+     "why": "Same trap on a different figure."},
+    {"id": "superseded-available-on-request", "query": "AX-200 flange bolt torque",
+     "include_superseded": true, "require_doc": "ax200-service-v1",
+     "why": "Servicing an older serial range is a real need. Excluded by default, reachable on purpose."}
+  ]
+}

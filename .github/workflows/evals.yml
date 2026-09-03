@@ -1,0 +1,26 @@
+name: evals
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # Zero dependencies, no API key, no network. The retrieval and
+      # verification layers are deterministic by design, which is what makes
+      # this usable as a merge gate rather than a nightly report nobody reads.
+      - name: Run evaluation suite
+        run: python3 evals/run_evals.py
+      - name: Smoke-test the MCP server
+        run: |
+          printf '%s\n' \
+            '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' \
+            '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' \
+            | python3 grounded/mcp_server.py | grep -q corpus_answer
