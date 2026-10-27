@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root { color-scheme: dark; }
+  html { scroll-behavior: smooth; }
+  body { @apply bg-obsidian text-ink font-sans text-body; overflow-x: hidden; }
+  ::selection { background: #D4FF4F; color: #0A0A0A; }
+  :focus-visible { outline: 2px solid #D4FF4F; outline-offset: 2px; border-radius: 4px; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
+}
+
+@layer components {
+  .container-x { @apply mx-auto w-full max-w-content px-6; }
+  .section { padding-block: clamp(80px, 10vw, 160px); }
+  .eyebrow { @apply font-mono text-mono uppercase tracking-eyebrow text-lime; }
+  .glass { @apply rounded-card border border-line backdrop-blur-xl; background: rgba(255,255,255,0.04); }
+  .card { @apply glass transition-[transform,box-shadow,border-color] duration-300 ease-out; }
+  .card:hover { @apply -translate-y-1.5 shadow-lift; border-color: rgba(255,255,255,0.12); }
+  .grid-12 { @apply grid grid-cols-12 gap-6; }
+  .serif-i { @apply font-display italic; }
+  .marquee-track { @apply flex w-max animate-marquee whitespace-nowrap; }
+  .marquee:hover .marquee-track { animation-play-state: paused; }
+}
+
+@media (hover: none) {
+  .card:hover { transform: none; box-shadow: none; }
+}
