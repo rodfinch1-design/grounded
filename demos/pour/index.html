@@ -1,0 +1,395 @@
+<title>Pour & Play</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Scroll-driven coffee hero demo in the single-brand-colour, serif-led style of food and drink showcase reels.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&family=Manrope:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: one fixed canvas stage behind three pinned "acts"; copy sits in a left rail at desktop width and stacks on phones. */
+  :root{
+    --wine:#3B1710;        /* hero ground */
+    --wine-2:#2A0F0A;
+    --cream:#F6F0E6;       /* act 2 + 3 ground */
+    --cream-2:#EDE4D6;
+    --ink:#1E1512;
+    --ink-2:rgba(30,21,18,.66);
+    --paper:#FBF7F1;
+    --paper-2:rgba(251,247,241,.68);
+    --gold:#C58A3A;        /* accent, from the crema */
+    --bean:#4A2A1C;
+    --font-display:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+    --font-sans:Manrope,"Helvetica Neue",Arial,sans-serif;
+    --font-mono:"DM Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+    --gutter-l:max(16px,env(safe-area-inset-left,0px));
+    --gutter-r:max(16px,env(safe-area-inset-right,0px));
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:auto}
+  body{margin:0;background:var(--wine);color:var(--paper);font-family:var(--font-sans);font-size:15px;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;transition:background .2s linear}
+  body.light{color:var(--ink)}
+  ::selection{background:var(--gold);color:var(--ink)}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:999px}
+
+  /* ---------- nav ---------- */
+  .nav{position:fixed;inset:env(safe-area-inset-top,0px) 0 auto 0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px var(--gutter-r) 18px var(--gutter-l);mix-blend-mode:normal}
+  .brand{display:flex;flex-direction:column;line-height:1;text-decoration:none;color:inherit}
+  .brand b{font:600 22px/1 var(--font-display);letter-spacing:.14em;text-transform:uppercase}
+  .brand small{font:400 10px/1.4 var(--font-sans);letter-spacing:.08em;opacity:.7;margin-top:4px}
+  .links{display:none;gap:28px;font:500 11px/1 var(--font-sans);letter-spacing:.14em;text-transform:uppercase}
+  .links a{color:inherit;text-decoration:none;opacity:.75}
+  .links a:hover{opacity:1}
+  .pill{display:inline-flex;align-items:center;gap:10px;border:1px solid currentColor;border-radius:999px;padding:11px 18px;font:600 11px/1 var(--font-sans);letter-spacing:.14em;text-transform:uppercase;color:inherit;text-decoration:none;background:transparent;transition:background .25s,color .25s,transform .25s}
+  .pill:hover{transform:translateY(-1px)}
+  .pill.solid{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+  @media(min-width:900px){.links{display:flex}}
+
+  /* ---------- stage ---------- */
+  #stage{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none}
+  .labels{position:fixed;inset:0;z-index:5;pointer-events:none}
+  .label{position:absolute;transform:translate(-50%,-50%);font:italic 500 clamp(13px,1.4vw,17px)/1.2 var(--font-display);color:var(--ink);white-space:nowrap;opacity:0;display:flex;align-items:center;gap:10px}
+  .label::before{content:"";width:28px;height:1px;background:var(--ink);opacity:.5}
+  .label.flip{flex-direction:row-reverse;text-align:right}
+  .label span{font:400 9px/1 var(--font-mono);letter-spacing:.18em;text-transform:uppercase;opacity:.55;display:block;margin-top:3px}
+
+  /* ---------- acts ---------- */
+  .act{position:relative;min-height:100svh;display:grid;align-content:start;padding:calc(96px + env(safe-area-inset-top,0px)) var(--gutter-r) 0 var(--gutter-l);z-index:10}
+  @media(min-width:900px){.act-1{align-content:center;padding-top:0}}
+  .act-inner{width:100%;max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:24px;align-items:center}
+  @media(min-width:900px){.act-inner{grid-template-columns:5fr 7fr}}
+  .copy{max-width:520px;min-width:0}
+  .rail{display:flex;align-items:center;gap:12px;font:500 10px/1 var(--font-mono);letter-spacing:.24em;text-transform:uppercase;opacity:.7;margin-bottom:28px}
+  .rail::before{content:"";width:32px;height:1px;background:currentColor;opacity:.6}
+  .kicker{font:italic 400 clamp(18px,2vw,22px)/1.2 var(--font-display);opacity:.85;margin:0 0 10px}
+  h1{font:600 clamp(44px,7.2vw,96px)/1 var(--font-display);letter-spacing:.01em;text-transform:uppercase;margin:0;text-wrap:balance}
+  h2{font:600 clamp(36px,5.2vw,68px)/1 var(--font-display);letter-spacing:.01em;text-transform:uppercase;margin:0;text-wrap:balance}
+  h1 em,h2 em{font-style:italic;font-weight:500;letter-spacing:0}
+  .lede{max-width:34ch;margin:18px 0 24px;color:inherit;opacity:.78;font-size:clamp(15px,1.2vw,17px)}
+  .act-1{color:var(--paper)}
+  .act-2,.act-3{color:var(--ink)}
+  .act-2 .act-inner{grid-template-columns:1fr}
+  .act-2 .copy{text-align:center;margin:0 auto;max-width:720px}
+  .act-2 .rail{justify-content:center}
+  .act-2 .rail::before{display:none}
+  .act-3 .act-inner{grid-template-columns:1fr}
+  .act-3 .copy{text-align:center;margin:0 auto}
+  .act-3 .rail{justify-content:center}
+  .act-3 .rail::before{display:none}
+  .dots,.scroll-hint{transition:opacity .3s}
+  body.past .dots,body.past .scroll-hint{opacity:0;pointer-events:none}
+  .dots{position:fixed;left:0;right:0;bottom:calc(22px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;gap:8px;z-index:30}
+  .dots i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.3;transition:opacity .3s,transform .3s}
+  .dots i.on{opacity:1;transform:scale(1.25)}
+  .spacer{height:40svh}
+  .scroll-hint{position:fixed;right:var(--gutter-r);bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:30;font:400 9px/1 var(--font-mono);letter-spacing:.22em;text-transform:uppercase;opacity:.6;writing-mode:vertical-rl;transform:rotate(180deg)}
+
+  /* ---------- menu + footer ---------- */
+  .menu{position:relative;z-index:10;background:var(--cream);color:var(--ink);padding:clamp(72px,10vw,140px) var(--gutter-r) clamp(72px,10vw,140px) var(--gutter-l)}
+  .menu-inner{max-width:1280px;margin:0 auto}
+  .menu h3{font:600 clamp(28px,3.4vw,44px)/1.05 var(--font-display);text-transform:uppercase;letter-spacing:.02em;margin:0 0 36px;text-wrap:balance}
+  .menu h3 em{font-style:italic;font-weight:500;letter-spacing:0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:rgba(30,21,18,.12);border:1px solid rgba(30,21,18,.12)}
+  .item{background:var(--cream);padding:26px 24px;min-width:0}
+  .item .n{font:500 10px/1 var(--font-mono);letter-spacing:.22em;opacity:.55}
+  .item h4{font:600 26px/1.1 var(--font-display);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.02em}
+  .item p{margin:0 0 18px;color:var(--ink-2);font-size:14px}
+  .item .price{display:flex;justify-content:space-between;align-items:baseline;font:500 13px/1 var(--font-sans);letter-spacing:.06em}
+  .item .price b{font:600 20px/1 var(--font-display)}
+  footer{position:relative;z-index:10;background:var(--wine-2);color:var(--paper);padding:48px var(--gutter-r) calc(40px + env(safe-area-inset-bottom,0px)) var(--gutter-l)}
+  .foot-inner{max-width:1280px;margin:0 auto;display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:flex-end}
+  footer .brand b{font-size:40px}
+  footer p{margin:0;font:400 11px/1.6 var(--font-mono);letter-spacing:.1em;text-transform:uppercase;opacity:.6}
+
+  @media(prefers-reduced-motion:reduce){
+    .pill,.dots i{transition:none}
+  }
+</style>
+
+<canvas id="stage" aria-hidden="true"></canvas>
+<div class="labels" id="labels" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#top"><b>Aurum</b><small>Specialty coffee · Hong Kong</small></a>
+  <nav class="links" aria-label="Primary">
+    <a href="#top">Home</a><a href="#ballet">Origins</a><a href="#menu">Menu</a><a href="#reserve">Contact</a>
+  </nav>
+  <a class="pill" href="#menu" aria-label="Open the menu">Menu <span aria-hidden="true">→</span></a>
+</header>
+
+<main id="top">
+  <section class="act act-1" id="act1" aria-label="The pour">
+    <div class="act-inner">
+      <div class="copy">
+        <div class="rail">Section 01</div>
+        <p class="kicker">The pour</p>
+        <h1>Gold in <em>every</em> drop.</h1>
+        <p class="lede">A 28-second bloom, a 2:45 draw, and a crema that holds a spoon. Roasted on Tuesdays, poured by Thursday.</p>
+        <a class="pill solid" href="#ballet">Explore the cup <span aria-hidden="true">→</span></a>
+      </div>
+      <div aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <section class="act act-2" id="ballet" aria-label="The bean ballet">
+    <div class="act-inner">
+      <div class="copy">
+        <div class="rail">Section 02</div>
+        <p class="kicker">The bean ballet</p>
+        <h2>A little bit of <em>everywhere.</em></h2>
+        <p class="lede" style="margin-inline:auto">Five origins, one blend. Scroll to pull it apart.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="act act-3" id="reserve" aria-label="The masterpiece">
+    <div class="act-inner">
+      <div class="copy">
+        <div class="rail">03 · The masterpiece</div>
+        <h2>Your cup is <em>waiting.</em></h2>
+        <p class="lede" style="margin-inline:auto">Sheung Wan, 7am to 6pm. Walk in, or hold a seat at the bar.</p>
+        <a class="pill" href="#menu">Reserve a seat</a>
+      </div>
+    </div>
+  </section>
+  <div class="spacer" aria-hidden="true"></div>
+
+  <section class="menu" id="menu" aria-labelledby="menu-h">
+    <div class="menu-inner">
+      <h3 id="menu-h">The bar, <em>this week.</em></h3>
+      <div class="grid">
+        <article class="item"><div class="n">01</div><h4>Espresso</h4><p>Our house blend, 18g in, 38g out. Chocolate first, then stone fruit.</p><div class="price"><span>Double</span><b>HK$38</b></div></article>
+        <article class="item"><div class="n">02</div><h4>Flat white</h4><p>Textured to 60°C, poured thin. Ristretto base so the milk doesn't win.</p><div class="price"><span>6 oz</span><b>HK$48</b></div></article>
+        <article class="item"><div class="n">03</div><h4>Pour over</h4><p>Single origin, rotated weekly. This week: Yirgacheffe, washed, 1,950m.</p><div class="price"><span>V60 · 15g</span><b>HK$58</b></div></article>
+        <article class="item"><div class="n">04</div><h4>Cold brew</h4><p>18 hours, coarse grind, served over one large cube. No ice dilution.</p><div class="price"><span>10 oz</span><b>HK$52</b></div></article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <a class="brand" href="#top"><b>Aurum</b><small>Specialty coffee · Hong Kong</small></a>
+    <p>Demo · built to leave an impression · no photographs were used</p>
+  </div>
+</footer>
+
+<div class="dots" id="dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+<div class="scroll-hint" aria-hidden="true">Scroll</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(() => {
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canvas = document.getElementById('stage');
+  const ctx = canvas.getContext('2d');
+  const labelsEl = document.getElementById('labels');
+  const dots = [...document.querySelectorAll('#dots i')];
+  let W = 0, H = 0, DPR = 1, t = 0;
+
+  // Scroll state: act 1 pour (0..1), act 2 explode (0..1), act 3 collapse (0..1). Updated by ScrollTrigger.
+  const S = { pour: 0, explode: 0, collapse: 0, light: 0 };
+
+  const origins = [
+    { name: 'Yirgacheffe', meta: 'Ethiopia · 1,950 m', a: -1.1 },
+    { name: 'Huila', meta: 'Colombia · 1,700 m', a: 0.2 },
+    { name: 'Sidamo', meta: 'Ethiopia · 1,800 m', a: 1.5 },
+    { name: 'Nyeri', meta: 'Kenya · 1,650 m', a: 2.6 },
+    { name: 'Cerrado', meta: 'Brazil · 1,100 m', a: 3.9 },
+  ];
+  // 28 beans: 5 labelled, the rest filler. Each gets an orbit angle, radius factor, size and spin.
+  const beans = [];
+  for (let i = 0; i < 28; i++) {
+    const o = origins[i] ;
+    beans.push({ a: o ? o.a : (i * 2.399) % (Math.PI * 2), r: o ? 1 : 0.55 + ((i * 37) % 50) / 100, s: o ? 1 : 0.6 + ((i * 13) % 40) / 100, spin: ((i * 17) % 100) / 100 * Math.PI, label: o || null, el: null, z: ((i * 29) % 100) / 100 });
+  }
+  origins.forEach((o, i) => {
+    const el = document.createElement('div');
+    el.className = 'label';
+    el.innerHTML = `<div>${o.name}<span>${o.meta}</span></div>`;
+    labelsEl.appendChild(el);
+    beans[i].el = el;
+  });
+
+  function resize() {
+    DPR = Math.min(2, devicePixelRatio || 1);
+    W = innerWidth; H = innerHeight;
+    canvas.width = W * DPR; canvas.height = H * DPR;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  addEventListener('resize', resize); resize();
+
+  const lerp = (a, b, k) => a + (b - a) * k;
+  const ease = (x) => 1 - Math.pow(1 - x, 3);
+  const mix = (c1, c2, k) => {
+    const p = (c) => c.match(/\w\w/g).map((h) => parseInt(h, 16));
+    const [a, b] = [p(c1), p(c2)];
+    return `rgb(${a.map((v, i) => Math.round(lerp(v, b[i], k))).join(',')})`;
+  };
+
+  // Where the cup sits: right-of-centre on desktop, lower-centre on phones so the copy stays readable above it.
+  function cupPos() {
+    const phone = W < 900;
+    const act2 = S.explode > 0.02 && S.collapse < 0.98;
+    const x = phone ? W * 0.5 : (act2 ? W * 0.5 : W * 0.7);
+    const y = phone ? H * 0.80 : (act2 ? H * 0.74 : H * 0.56);
+    const scale = Math.min(W, H) / (phone ? 820 : (act2 ? 1100 : 900));
+    return { x, y, scale };
+  }
+
+  function drawBean(x, y, size, rot, alpha) {
+    ctx.save();
+    ctx.translate(x, y); ctx.rotate(rot); ctx.globalAlpha = alpha;
+    ctx.fillStyle = '#4A2A1C';
+    ctx.beginPath(); ctx.ellipse(0, 0, size, size * 0.64, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(246,240,230,.55)'; ctx.lineWidth = Math.max(1, size * 0.12);
+    ctx.beginPath(); ctx.moveTo(-size * 0.8, 0); ctx.quadraticCurveTo(0, size * 0.35, size * 0.8, 0); ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawCup(cx, cy, k, light) {
+    // k = scale. Cup is a glass tumbler drawn with ellipses so the coffee level can be read through it.
+    const w = 150 * k, h = 190 * k;
+    const liquid = ease(Math.min(1, S.pour * 1.1));
+    const rimA = w * 0.5, rimB = w * 0.17, base = w * 0.36;
+    const top = cy - h * 0.5, bot = cy + h * 0.5;
+
+    // shadow on the table
+    ctx.save();
+    ctx.fillStyle = light ? 'rgba(30,21,18,.14)' : 'rgba(0,0,0,.35)';
+    ctx.beginPath(); ctx.ellipse(cx, bot + 10 * k, w * 0.62, w * 0.16, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+
+    // glass body
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(cx - rimA, top); ctx.lineTo(cx - base, bot); ctx.ellipse(cx, bot, base, base * 0.34, 0, Math.PI, 0, true); ctx.lineTo(cx + rimA, top); ctx.ellipse(cx, top, rimA, rimB, 0, 0, Math.PI, false); ctx.closePath();
+    ctx.fillStyle = light ? 'rgba(255,255,255,.22)' : 'rgba(255,255,255,.06)';
+    ctx.fill();
+    ctx.clip();
+
+    // coffee + crema inside (clipped to glass)
+    const lvl = lerp(bot - 6 * k, top + h * 0.22, liquid);
+    const g = ctx.createLinearGradient(0, lvl, 0, bot);
+    g.addColorStop(0, '#5A3118'); g.addColorStop(1, '#2A1309');
+    ctx.fillStyle = g;
+    ctx.fillRect(cx - w, lvl, w * 2, bot - lvl + 20);
+    const lw = lerp(base, rimA, (bot - lvl) / (bot - top));
+    ctx.fillStyle = '#C58A3A';
+    ctx.beginPath(); ctx.ellipse(cx, lvl, lw, lw * 0.34, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(255,230,180,.45)';
+    ctx.beginPath(); ctx.ellipse(cx - lw * 0.3, lvl - 2 * k, lw * 0.35, lw * 0.1, -0.3, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+
+    // glass outline + highlight
+    ctx.save();
+    ctx.strokeStyle = light ? 'rgba(30,21,18,.35)' : 'rgba(246,240,230,.5)'; ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(cx - rimA, top); ctx.lineTo(cx - base, bot); ctx.ellipse(cx, bot, base, base * 0.34, 0, Math.PI, 0, true); ctx.lineTo(cx + rimA, top);
+    ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(cx, top, rimA, rimB, 0, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 3 * k;
+    ctx.beginPath(); ctx.moveTo(cx - rimA * 0.72, top + h * 0.12); ctx.lineTo(cx - base * 0.95, bot - h * 0.18); ctx.stroke();
+    ctx.restore();
+
+    // the pour: a stream from above the frame into the cup during act 1
+    if (S.pour > 0.02 && S.pour < 0.98) {
+      const streamA = Math.sin(Math.PI * Math.min(1, S.pour / 0.98));
+      ctx.save();
+      ctx.globalAlpha = Math.min(1, streamA * 1.6);
+      const sw = 7 * k;
+      const wob = Math.sin(t * 6) * 2 * k;
+      const g2 = ctx.createLinearGradient(cx, top - H, cx, lvl);
+      g2.addColorStop(0, '#6B3A1E'); g2.addColorStop(1, '#C58A3A');
+      ctx.fillStyle = g2;
+      ctx.beginPath();
+      ctx.moveTo(cx - sw + wob, -20);
+      ctx.bezierCurveTo(cx - sw * 0.6, lvl * 0.5, cx - sw * 0.4 - wob, lvl * 0.8, cx - sw * 0.5, lvl);
+      ctx.lineTo(cx + sw * 0.5, lvl);
+      ctx.bezierCurveTo(cx + sw * 0.4 + wob, lvl * 0.8, cx + sw * 0.6, lvl * 0.5, cx + sw - wob, -20);
+      ctx.closePath(); ctx.fill();
+      // splash ring
+      ctx.strokeStyle = 'rgba(255,230,180,.6)'; ctx.lineWidth = 1.5;
+      const rr = (8 + ((t * 40) % 18)) * k;
+      ctx.beginPath(); ctx.ellipse(cx, lvl, rr, rr * 0.34, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+    }
+    return { top, bot, w, h };
+  }
+
+  function frame() {
+    t += 1 / 60;
+    const light = S.light;
+    ctx.clearRect(0, 0, W, H);
+
+    // ground: wine -> cream, plus a soft radial glow behind the cup
+    const { x: cx, y: cy, scale } = cupPos();
+    const bg = mix('#3B1710', '#F6F0E6', light);
+    document.body.style.background = bg;
+    const glow = ctx.createRadialGradient(cx, cy, 10, cx, cy, Math.max(W, H) * 0.6);
+    glow.addColorStop(0, light > 0.5 ? 'rgba(197,138,58,.18)' : 'rgba(197,138,58,.22)');
+    glow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
+
+    // idle float so the hero never looks like a still
+    const bob = reduced ? 0 : Math.sin(t * 1.4) * 6 * scale;
+    const cup = drawCup(cx, cy + bob, scale, light > 0.5);
+
+    // beans: in the cup during act 1, orbit outward during act 2, fall back in during act 3
+    const ex = ease(S.explode) * (1 - ease(S.collapse));
+    const spinAll = (reduced ? 0 : t * 0.25) + S.explode * 2.2 + S.collapse * 1.4;
+    const orbitR = W < 900 ? W * 0.44 : Math.min(W, H) * 0.38;
+    const phoneYShift = 0;
+    const sorted = beans.slice().sort((a, b) => a.z - b.z);
+    for (const b of sorted) {
+      const ang = b.a + spinAll * (0.5 + b.z * 0.5);
+      const r = orbitR * b.r * ex;
+      const depth = 0.75 + 0.5 * (0.5 + 0.5 * Math.sin(ang)); // pseudo-3D: beans in front larger
+      const bx = cx + Math.cos(ang) * r;
+      const by = (cy + bob + phoneYShift * ex) + Math.sin(ang) * r * (W < 900 ? 0.5 : 0.38) - (1 - ex) * cup.h * 0.1;
+      const size = 11 * scale * b.s * depth;
+      const alpha = Math.max(0, Math.min(1, ex * 1.4)) ;
+      if (alpha > 0.01) drawBean(bx, by, size, b.spin + ang * 0.6, alpha);
+      if (b.el) {
+        const show = ex > 0.6 && S.collapse < 0.15;
+        b.el.style.opacity = show ? String(Math.min(1, (ex - 0.6) * 4)) : '0';
+        const lw = b.el.offsetWidth || 120, g = 16;
+        const leftSide = bx < cx;
+        let lx = leftSide ? bx - size * 2.2 - lw / 2 : bx + size * 2.2 + lw / 2;
+        lx = Math.max(g + lw / 2, Math.min(W - g - lw / 2, lx));
+        b.el.style.left = lx + 'px';
+        b.el.style.top = by + 'px';
+        b.el.classList.toggle('flip', leftSide);
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // ---------- scroll choreography ----------
+  gsap.registerPlugin(ScrollTrigger);
+  const nav = document.getElementById('nav');
+  function setDots(i) { dots.forEach((d, j) => d.classList.toggle('on', j === i)); }
+
+  if (reduced) {
+    // Rest state for reduced motion: full cup, beans at rest, light theme once past the hero.
+    S.pour = 1;
+    ScrollTrigger.create({ trigger: '#ballet', start: 'top 60%', onToggle: (s) => { S.light = s.isActive || s.progress > 0 ? 1 : 0; document.body.classList.toggle('light', S.light > .5); } });
+  } else {
+    gsap.to(S, { pour: 1, ease: 'none', scrollTrigger: { trigger: '#act1', start: 'top top', end: '+=120%', scrub: 0.6, pin: true, onUpdate: () => setDots(0) } });
+    gsap.to(S, { explode: 1, light: 1, ease: 'none', scrollTrigger: { trigger: '#ballet', start: 'top top', end: '+=160%', scrub: 0.6, pin: true, onUpdate: (s) => { setDots(1); document.body.classList.toggle('light', s.progress > 0.25); } } });
+    gsap.to(S, { collapse: 1, ease: 'none', scrollTrigger: { trigger: '#reserve', start: 'top top', end: '+=100%', scrub: 0.6, pin: true, onUpdate: () => setDots(2) } });
+    // Staggered copy reveals per act
+    document.querySelectorAll('.act .copy').forEach((c) => {
+      gsap.from(c.children, { y: 28, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.08, scrollTrigger: { trigger: c, start: 'top 80%', once: true } });
+    });
+  }
+  // Nav takes the ink colour of whatever is behind it
+  let overFooter = false;
+  ScrollTrigger.create({ trigger: '#menu', start: 'top 70%', onToggle: (s) => document.body.classList.toggle('past', s.isActive || s.progress >= 1) });
+  ScrollTrigger.create({ trigger: 'footer', start: 'top 12%', onToggle: (s) => overFooter = s.isActive });
+  gsap.ticker.add(() => { nav.style.color = overFooter ? 'var(--paper)' : (S.light > 0.5 ? 'var(--ink)' : 'var(--paper)'); });
+
+  frame();
+})();
+</script>
